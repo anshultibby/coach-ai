@@ -5,6 +5,7 @@ class Settings(BaseSettings):
     # Application settings
     APP_NAME: str = "AI Health Coach"
     DEBUG: bool = False
+    BASE_URL: str = "http://localhost:8000"  # Update this when deploying
     
     # Supabase
     SUPABASE_URL: str
@@ -17,6 +18,7 @@ class Settings(BaseSettings):
     TWILIO_ACCOUNT_SID: str
     TWILIO_AUTH_TOKEN: str
     TWILIO_PHONE_NUMBER: str
+    TEST_PHONE_NUMBER: str  # Your verified phone number for testing
     
     class Config:
         env_file = ".env"

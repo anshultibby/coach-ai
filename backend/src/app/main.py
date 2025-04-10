@@ -28,11 +28,4 @@ app.include_router(assistants.router, prefix="/api/assistants", tags=["assistant
 # Health check endpoint
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy"}
-
-# Import and include routers
-# These will be uncommented as we create the route handlers
-# from app.api.routes import calls, dashboard, users
-# app.include_router(calls.router, prefix="/api/calls", tags=["calls"])
-# app.include_router(dashboard.router, prefix="/api/dashboard", tags=["dashboard"])
-# app.include_router(users.router, prefix="/api/users", tags=["users"]) 
+    return {"status": "healthy"} 

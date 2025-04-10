@@ -3,11 +3,16 @@ from twilio.twiml.voice_response import VoiceResponse
 from twilio.request_validator import RequestValidator
 from pydantic import BaseModel
 from typing import Optional
+from twilio.rest import Client
+from fastapi.responses import Response
 
 from app.core.config import settings
 from app.core.supabase import supabase
 
 router = APIRouter()
+
+# Initialize Twilio client
+client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
 
 class SpeechInput(BaseModel):
     CallSid: str
@@ -93,4 +98,24 @@ async def handle_hangup(request: Request):
         raise HTTPException(status_code=403, detail="Invalid Twilio request")
     
     # TODO: Implement call cleanup logic
-    return {"status": "success"} 
+    return {"status": "success"}
+
+@router.get("/test")
+async def test_twilio():
+    """Test endpoint that returns simple TwiML"""
+    response = VoiceResponse()
+    response.say("Hello! Your Twilio integration is working correctly.")
+    return Response(content=str(response), media_type="application/xml")
+
+@router.post("/test-call")
+async def make_test_call():
+    """Make a test call to verify Twilio credentials"""
+    try:
+        call = client.calls.create(
+            url=f"{settings.BASE_URL}/api/calls/test",  # This should be your public URL
+            to=settings.TEST_PHONE_NUMBER,  # This should be your verified number
+            from_=settings.TWILIO_PHONE_NUMBER
+        )
+        return {"message": "Test call initiated", "call_sid": call.sid}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e)) 
