@@ -9,7 +9,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     POETRY_VERSION=1.4.2 \
     POETRY_HOME="/opt/poetry" \
-    POETRY_VIRTUALENVS_CREATE=false
+    POETRY_VIRTUALENVS_CREATE=false \
+    PYTHONPATH=/app
 
 # Install system dependencies
 RUN apt-get update \
@@ -25,6 +26,9 @@ ENV PATH="${POETRY_HOME}/bin:$PATH"
 # Copy poetry files
 COPY pyproject.toml poetry.lock* ./
 
+# Install setuptools to ensure distutils is available
+RUN pip install --upgrade pip setuptools
+
 # Install dependencies
 RUN poetry install --no-interaction --no-ansi --no-root
 
@@ -32,4 +36,4 @@ RUN poetry install --no-interaction --no-ansi --no-root
 COPY . .
 
 # Run the application
-CMD ["poetry", "run", "uvicorn", "src.app.main:app", "--host", "0.0.0.0", "--port", "8000"] 
+CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"] 
